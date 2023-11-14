@@ -1,0 +1,237 @@
+---
+title: "Graphing with ggplot"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+```
+
+```{r}
+# Load the mpg dataset
+data('mpg')
+mpgData = mpg
+
+# Print the first five rows (or samples) in the data frame
+head(mpgData, 5)
+str(mpgData)
+```
+
+```{r}
+foodData = read.csv('food-texture.csv', header = TRUE, row.names = 1)
+head(foodData, 5)
+str(foodData)
+```
+
+```{r}
+# Add another column to food data frame called Taste
+#foodData['Taste'] = sample(c('poor', 'fair', 'good', 'very good'), replace = TRUE, nrow(foodData), p = c(0.25, 0.25, 0.25, 0.25))
+```
+
+```{r}
+continuous_cols = c('Oil', 'Density', 'Fracture', 'Hardness')
+categorical_cols = c('Crispy', 'Taste')
+```
+
+```{r}
+# Convert categorical columns to factor type
+foodData[categorical_cols] = lapply(foodData[categorical_cols], factor)
+str(foodData)
+```
+
+
+```{r}
+#write.csv(foodData, 'Data/food-texture.csv')
+```
+
+
+
+```{r}
+# Initiate the ggplot() function binding to the car data frame
+ggplot(data = mpgData)
+
+# Create a plot object
+p1 = ggplot(data = mpgData)
+
+# Use the aes() function to specify the aesthetic mapping, that is, which variables
+# should be plotted
+p1 = ggplot(data = mpgData, aes(x = disp, y = hwy))
+
+# Use the geom_ type functions to add geometric elements
+p1 = ggplot(data = mpgData, aes(x = displ, y = hwy)) +
+  geom_point()
+
+# Add labels and title
+p1 = p1 + labs(x = 'Displacement (litres)', y = 'Mileage (MPG)', title = 'Mileage vs. Displacement')
+p1
+```
+
+```{r}
+p = ggplot(data = foodData) +
+  geom_point(aes(x = Oil, y = Density))
+p
+```
+
+```{r}
+p = ggplot(data = foodData) +
+  geom_point(aes(x = Oil, y = Density, color = Crispy))
+p
+```
+
+```{r}
+p = ggplot(data = foodData) +
+  geom_boxplot(aes(x = Crispy, y = Density))
+p
+
+```
+
+```{r}
+p = ggplot(data = foodData) +
+  geom_histogram(aes(x = Density), binwidth = 100, color = 'blue')
+p
+```
+
+```{r}
+p = ggplot(data = foodData[foodData$Crispy == 13, ]) +
+  geom_histogram(aes(x = Density), binwidth = 100, color = 'blue')
+p
+```
+
+```{r}
+p = ggplot(data = foodData) +
+  geom_bar(aes(x = Crispy), color = 'blue')
+p
+```
+
+
+```{r}
+# Map aesthetics to variables
+
+# Map the color aesthetic to the class variable
+p2 = ggplot(data = mpgData) +
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+p2
+```
+
+```{r}
+# Map aesthetics to variables
+
+# Map the size (or alpha or shape) aesthetic to the class variable
+p3 = ggplot(data = mpgData) +
+  geom_point(aes(x = displ, y = hwy, color = class, shape = drv)) + labs(x = 'Displacement (litres)', y = 'Mileage (MPG)', title = 'Mileage vs. Displacement')
+p3
+```
+
+```{r}
+# Set aesthetic manually
+
+# Mark the points blue in color, square in shape, and fixed size
+p4 = ggplot(data = mpgData) +
+  geom_point(aes(x = displ, y = hwy), color = 'red', size = 1) + labs(x = 'Displacement (litres)', y = 'Mileage (MPG)', title = 'Mileage vs. Displacement')
+p4
+```
+
+```{r}
+# How do we relate a continuous and a categorical feature?
+p5 = ggplot(data = mpgData) + 
+  geom_boxplot(aes(x = class, y = hwy)) + labs(x = 'Vehicle Class', y = 'Mileage (MPG)', title = 'Mileage vs. Vehicle Class')
+p5
+```
+
+
+```{r}
+# Add additional variables using facets
+
+# Plot mileage w.r.t. each class individually
+ggplot(data = mpgData) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(, nrow = 2)
+```
+
+```{r}
+# Plot mileage w.r.t drive train and number of cylinders
+ggplot(data = mpgData) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid()
+```
+
+```{r}
+# A quick exercise on facet plotting with filtering of samples
+# Investigate the number of levels in the cyl feature
+factor()
+
+# How many cars of each cyl type are there?
+mpgData %>% 
+
+# Filter samples with 3 and 5 cylinder cars (which are very rare)
+# mpgData = mpgData %>% filter(!(? %in% c(?, ?)))
+# 
+# head(mpgData, 5)
+# 
+# # Map the color aesthetic to the cyl variable
+# p5 = ggplot(data = mpgData) +
+#   geom_point(mapping = aes(x = displ, y = hwy))
+# p5
+```
+
+```{r}
+density = foodData$Density
+density_lb = 2.2*density
+density_gm = 1000*density
+density_MC = density - mean(density)
+mean(density_MC)
+```
+
+```{r}
+df_den = data.frame(cbind(density, density_MC, mean(density)))
+
+p = ggplot(data = df_den) + geom_point(aes(x = c(1:nrow(foodData)), y = density), color = 'blue') + labs(x = 'Samples', y = 'Density in kg/m^3', title = 'Component Plot of Density')
+p
+```
+
+```{r}
+df_den = data.frame(cbind(density, density_MC, mean(density)))
+
+p = ggplot(data = df_den) + geom_point(aes(x = c(1:nrow(foodData)), y = density_MC), color = 'blue') + labs(x = 'Samples', y = 'Mean Centered Density in kg/m^3', title = 'Component Plot of Mean Centered Density') + geom_line(aes(x = c(1:nrow(foodData)), y = mean(density_MC)), color = 'red')
+p
+```
+
+```{r}
+df_den = data.frame(cbind(density, density_MC, mean(density)))
+
+p = ggplot(data = df_den) + geom_point(aes(x = c(1:nrow(foodData)), y = density), color = 'blue') + labs(x = 'Samples', y = 'Density in kg/m^3', title = 'Component Plot of Density') + geom_line(aes(x = c(1:nrow(foodData)), y = mean(density)), color = 'red') + geom_line(aes(x = c(1:nrow(foodData)), y = mean(density) + sd(density)), color = 'red', linetype = 'dashed') + geom_line(aes(x = c(1:nrow(foodData)), y = mean(density) - sd(density)), color = 'red', linetype = 'dashed')
+p
+```
+
+```{r}
+mean((density - mean(density))^2) #variance
+sqrt(mean((density - mean(density))^2)) #standard deviation
+var(density)
+sd(density)
+```
+
+```{r}
+z1 = (density - mean(density))/sd(density)
+z2 = (density_lb - mean(density_lb))/sd(density_lb)
+z1
+z2
+scale(density)
+scale(density_lb)
+```
+
+```{r}
+str(foodData)
+continuous_cols = c('Oil','Density','Fracture','Hardness')
+foodData[continuous_cols] = lapply(foodData[continuous_cols], scale)
+foodData[continuous_cols]
+```
+Pipelining
+----------
+fit() -> get ready with mean and SD, does not change the values in passed column
+fit_transform() -> get ready with mean and SD of each continuous column, also transforms the values in the passed continuous columns to z scores
+transform() -> uses the stored value of specified mean and SD to transform columns to z scores
+
+
+

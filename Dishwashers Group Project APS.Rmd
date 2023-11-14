@@ -1,0 +1,83 @@
+---
+title: "Dishwashers Group Project"
+author: "Keerthana K M, Adithya N Bhat, Mohit M J"
+date: "2023-08-31"
+output: html_document
+---
+```{r}
+s = c(0,1) #one refers to breaking a dish
+p = matrix(nrow = 5, ncol = 2, c(0.2, 0.2, 0.2, 0.2, 0.2, 0.8, 0.8, 0.8, 0.8, 0.8)) #equally likely that all the dishwashers break the dish
+
+clumsy = function(){
+  result = numeric(5)
+  for(i in c(1:5)){
+    result[i] = sample(s, size = 1, replace=TRUE, prob = p[i,])
+  }
+  return(result)
+}
+
+nsimulations = 1e4
+simulatedData = replicate(nsimulations, clumsy())
+#print(simulatedData)
+
+mean(simulatedData)*100
+```
+```{r}
+s = c('East','North')
+p = c(1/10,1/7)
+
+#Given any route, it takes 16 blocks for Joe to reach the store
+route = function(){
+  result = numeric(16)
+  for(i in c(1:16)){
+    result[i] = sample(s, 1, replace=TRUE, prob=p)
+  }
+  return(result)
+}
+
+nsimulations = 1e4
+simulatedData = replicate(nsimulations, route())
+#simulatedData
+
+#Probability that he reached the store
+checkEvent = function(data){
+  count1 = count2 = 0
+  val = FALSE
+  for(i in c(1:16)){
+    if(any(data[i] %in% c('East'))){
+      count1 = count1+1
+    }
+    if(any(data[i] %in% c('North'))){
+      count2 = count2+1
+    }
+  }
+  if(count1<=10 & count2<=6){
+    val = TRUE
+  }
+  return(val)
+}
+
+#Probability that he visits the bank
+checkEventBank = function(data){
+  count1 = count2 = 0
+  val = FALSE
+  for(i in c(1:10)){
+    if(any(data[i] %in% c('East'))){
+      count1 = count1+1
+    }
+    if(any(data[i] %in% c('North'))){
+      count2 = count2+1
+    }
+  }
+  if(count1<=6 & count2<=4){
+    val = TRUE
+  }
+  return(val)
+}
+
+#apply(simulatedData, 2, checkEvent)
+mean(apply(simulatedData, 2, checkEvent))
+mean(apply(simulatedData, 2, checkEventBank))
+```
+
+

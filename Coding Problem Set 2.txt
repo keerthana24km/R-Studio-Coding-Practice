@@ -1,0 +1,59 @@
+## Bus-ridership analysis
+
+ 
+
+# Sampling space for leaving the bus
+s1 = c(1, 0) # 1 corresponds to leaving the bus
+p1 = c(0.2, 0.8)
+
+ 
+
+# Sampling space for boarding the bus
+s2 = c(0, 1, 2)
+p2 = c(0.5, 0.4, 0.1)
+
+ 
+
+# Simulate the number of passengers from stop-1 to stop-10
+nstops = 10 # number of stops
+npassengers = 0 # number of passengers in the bus initially
+
+ 
+
+# User-defined function for simulating one trial of the bus ride
+# through all the stops
+simTrial = function(nstops){
+npassengers = 0
+# Run through every stop
+for (j in 1:nstops){
+  # If we have at least one passenger in the bus
+  # Simulate the leaving process
+  if (npassengers > 0){
+    left = sample(s1, size = 1, replace = FALSE, prob = p1)
+    npassengers = npassengers - left
+  }
+  # Else if no passengers on the bus, then nobody leaves the bus
+  else if (npassengers == 0){
+    left = 0
+  }
+  # Simulate the boarding process
+  boarded = sample(s2, size = 1, replace = FALSE, prob = p2)
+  npassengers = npassengers + boarded
+  # Print the status at every stop
+  cat(sprintf('No. of passengers after stop-%d is %d (left = %d, boarded = %d)\n', j, npassengers, left, boarded))
+}
+return(npassengers)
+}
+
+nsimulations = 10e3
+simulatedData = replicate(nsimulations, simTrial(nstops))
+mean(simulatedData)
+percent_people = mean(simulatedData)*100
+
+
+--------------------------------------------------------------------------
+I got the output as 4.45 sir....
+
+I would like to conclude that mean there are at least 4 people in the bus after the 10th stop.
+
+Like the bus is not empty throught out, since there are average of 4 people in every stop, so we can conclude that there will be at least 4 people in all the stops even after the 10th stop, hence bus will never be empty.

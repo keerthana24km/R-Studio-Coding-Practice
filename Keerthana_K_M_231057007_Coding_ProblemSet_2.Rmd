@@ -1,0 +1,127 @@
+---
+title: "Coding Problem Set 2"
+author: "Keerthana K M 231057007"
+date: "2023-08-26"
+output: html_document
+---
+
+```{r}
+#initially, the bus is empty at the first stop
+onboard = numeric(10)
+offboard = numeric(10)
+
+for(i in c(1:10)){ #ten stops
+  # there is a 50% chance of 0 passengers, or 40% chance of one passenger, or 10% chance of 2 passengers getting on-board
+  onboard[i] = 0.5*0 + 0.4*1 + 0.1*2
+}
+
+#since people get on the bus at first stop, let us assume they start getting down from the 2nd stop and further
+for(i in c(2:10)){
+  # there is a 20% chance of people getting down the bus independently (1 passenger)
+  offboard[i] = 0.2*1
+}
+
+# at first stop, no one gets down the bus, hence probability of a passenger getting down the bus at first stop is 0
+offboard[1] = 0
+
+```
+
+```{r}
+#0th passenger probability
+passenger0 = function(){
+  return(0.5)
+}
+```
+```{r}
+#1st passenger probability
+passenger1 = function(){
+  return(0.4)
+}
+```
+```{r}
+#2nd passenger probability
+passenger2 = function(){
+  return(0.1)
+}
+```
+
+```{r}
+passengers = function(){
+  result = numeric(10)
+  for(i in c(1:10)){
+    result[i] = onboard[i] #process of on-boarding and off-boarding the bus for each passenger
+  }
+  return(result)
+}
+```
+
+```{r}
+nsims = length(c(4:1000)) #simulations for 1000-2 passengers
+simulatedData = replicate(nsims, passengers())
+str(simulatedData)
+```
+
+```{r}
+onboarded_passengers = numeric(1000)
+onboarded_passengers[1] = passenger0()
+onboarded_passengers[2] = passenger1()
+onboarded_passengers[3] = passenger2()
+onboarded_passengers[4:1000] = passengers()
+#str(onboarded_passengers)
+```
+
+```{r}
+val = numeric(1000)
+checkEvent = function(data){
+  for(i in c(1:1000)){
+    if(i==1){
+      val[i] = onboarded_passengers[i]
+    }else if(i==2){
+      val[i] = onboarded_passengers[i]
+    }else if(i==3){
+      val[i] = onboarded_passengers[i]
+    }else{
+      val[i] = onboarded_passengers[i]
+    }
+  }
+  return(val)
+}
+```
+
+```{r}
+passen = mean(checkEvent())*100 #Percentage probability of no. of passengers in the bus
+print(passen)
+```
+There are about 60% of passengers in the bus during the ten stops. This means 40% of people have got down from the bus in the process.
+Hence, the percentage probability of bus being empty after tenth stop is 
+(no. of passengers in the bus - no. of passengers who got down)/total number of stops
+
+```{r}
+off = 100-passen
+result = (passen - off)/11
+print(result) #percentage probability of remaining no. of people getting down the bus by next stop, i.e. the 11th stop
+```
+Since the percentage is as low as ~2%, we can conclude that the bus will not be empty after the 10th stop.
+
+```{r}
+# Sampling space for leaving the bus
+s1 = c(1, 0) # 1 corresponds to leaving the bus
+p1 = c(0.2, 0.8)
+p = array(c(replicate(3, c(0.8, 0.2)), replicate(4, c(0.2, 0.8)), replicate(3, c(0.8, 0.2))), dim = c(2, 10))
+
+# Sampling space for boarding the bus
+s2 = c(0, 1, 2)
+p2 = c(0.5, 0.4, 0.1)
+pass = array(c(replicate(1, c(0.5, 0, 0)), replicate(1, c(0, 0.4, 0)), replicate(1, c(0, 0, 0.1)), replicate(7, c(0.5, 0.4, 0.1))), dim = c(3, 10))
+print(pass)
+
+# Simulate the number of passengers from stop-1 to stop-10
+nstops = 10 # number of stops
+npassengers = 0 # number of passengers in the bus initially
+
+simulatedData = replicate(nstops, pass)
+
+mean(simulatedData)
+```
+
+

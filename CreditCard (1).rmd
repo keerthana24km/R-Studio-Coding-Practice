@@ -1,0 +1,62 @@
+---
+title: "Credi Card Code"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+# Load credit card dataset
+FILE = 'CreditCardData.csv'
+ccData = read.csv(FILE, skip = 1, header = TRUE, row.names = 1)
+str(ccData)
+```
+
+```{r}
+# Adjust misrepresented categorical column values as NAs
+# Just run the cell for now
+ccData = ccData %>% mutate(SEX = ifelse(!(SEX %in% c(1, 2)), NA, SEX),
+EDUCATION = ifelse(!(EDUCATION %in% c(1, 2, 3, 4)), NA, EDUCATION),
+MARRIAGE = ifelse(!(MARRIAGE %in% c(1, 2)), NA, MARRIAGE),
+PAY_0 = ifelse(!(PAY_0 %in% c(-1,1,2,3,4,5,6,7,8,9)), NA, PAY_0),
+PAY_2 = ifelse(!(PAY_2 %in% c(-1,1,2,3,4,5,6,7,8,9)), NA, PAY_2),
+PAY_3 = ifelse(!(PAY_3 %in% c(-1,1,2,3,4,5,6,7,8,9)), NA, PAY_3),
+PAY_4 = ifelse(!(PAY_4 %in% c(-1,1,2,3,4,5,6,7,8,9)), NA, PAY_4),
+PAY_5 = ifelse(!(PAY_5 %in% c(-1,1,2,3,4,5,6,7,8,9)), NA, PAY_5),
+PAY_6 = ifelse(!(PAY_6 %in% c(-1,1,2,3,4,5,6,7,8,9)), NA, PAY_6))
+str(ccData)
+```
+
+```{r}
+# Plot percentage of NAs in each column of the data frame
+missing_percentage = sapply(ccData, function(x) {
+  sum(is.na(x)) / length(x) * 100
+})
+missing_percentage
+```
+
+```{r}
+# Create a data frame for visualization
+missing_data = data.frame(Column = names(missing_percentage), NA_percent = missing_percentage)
+
+# Create a bar plot
+p = ggplot(data = missing_data, aes(x = Column, y = NA_percent)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Missing Data Percentage by Column", x = "Column", y = "Missing Percentage")
+p
+```
+
+
+
+
+
+
+
+
+
+

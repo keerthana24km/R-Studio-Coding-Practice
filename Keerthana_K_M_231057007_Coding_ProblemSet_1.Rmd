@@ -1,0 +1,90 @@
+---
+title: "Coding Problem Set-1"
+author: "Keerthana K M 231057007"
+date: "2023-08-21"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+##Loading the dataset
+```{r}
+data = read.csv('bats.csv')
+str(data)
+```
+
+
+(a) What is the chance of a random bat carrying the Ebola virus?
+```{r}
+ebola = sum(data['Ebola'])
+mean(ebola/99999)*100
+
+```
+(b) For each gene, calculate the likelihood that is expressed in a random bat
+
+Gene 1
+```{r}
+gene1 = sum(data['Gene.1'])
+mean(gene1/99999)*100
+```
+Gene 2
+```{r}
+gene2 = sum(data['Gene.2'])
+mean(gene2/99999)*100
+```
+Gene 3
+```{r}
+gene3 = sum(data['Gene.3'])
+mean(gene3/99999)*100
+```
+Gene 4
+```{r}
+gene4 = sum(data['Gene.4'])
+mean(gene4/99999)*100
+```
+Gene 5
+```{r}
+gene5 = sum(data['Gene.5'])
+mean(gene5/99999)*100
+```
+(c) Is presence or absence of any of the genes indicative of a random bat potentially carrying the Ebola virus?
+
+For bats having Ebola virus, and having Gene1
+```{r}
+ebola_gene1 = sum(data$Ebola == TRUE & data$Gene.1 == TRUE)
+gene1 = sum(data$Gene.1 == TRUE)
+(mean(ebola_gene1)/mean(gene1))*100
+```
+For bats having Ebola virus, and having Gene2
+```{r}
+ebola_gene2 = sum(data$Ebola == TRUE & data$Gene.2 == TRUE)
+gene2 = sum(data$Gene.2 == TRUE)
+(mean(ebola_gene2)/mean(gene2))*100
+```
+For bats having Ebola virus, and having Gene3
+```{r}
+ebola_gene3 = sum(data$Ebola == TRUE & data$Gene.3 == TRUE)
+gene3 = sum(data$Gene.3 == TRUE)
+(mean(ebola_gene3)/mean(gene3))*100
+```
+For bats having Ebola virus, and having Gene4
+```{r}
+ebola_gene4 = sum(data$Ebola == TRUE & data$Gene.4 == TRUE)
+gene4 = sum(data$Gene.4 == TRUE)
+(mean(ebola_gene4)/mean(gene4))*100
+```
+For bats having Ebola virus, and having Gene5
+```{r}
+ebola_gene5 = sum(data$Ebola == TRUE & data$Gene.5 == TRUE)
+gene5 = sum(data$Gene.5 == TRUE)
+(mean(ebola_gene5)/mean(gene5))*100
+```
+We can see that Gene2 and Gene3 do not contribute much to presence of Ebola virus, we can consider them to be the independent features. But there is drastic change of measure when it comes to Gene1, Gene4 and Gene5.
+Here we have calculated the mean, which shows that there is a chance of presence of Gene1 in 70% of the bats bats, but only 30% of them have Ebola virus.
+There is a chance of presence of Gene4 in 80% of the bats, but only 37% of them have Ebola virus.
+There id a chance of presence of Gene5 in 32% of the bats, and almost 90% of them have Ebola virus.
+Thus, we can conclude that in most of the bats that have Gene5 and do not have Gene1 and Gene4, they are most likely to have the Ebola Virus.
+Gene1 - Absent, Gene4 - Absent, Gene5 - Present

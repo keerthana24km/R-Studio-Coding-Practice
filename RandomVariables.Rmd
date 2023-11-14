@@ -1,0 +1,151 @@
+---
+title: "BinomialRandomVariable"
+author: "Keerthana K M - 231057007"
+date: "2023-10-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+Probability Mass Function(PMF) = Px(2) = P(X=2)
+Cumulative Distribution Function(CDF) = Fx(2) = P(X<=2)
+P(X>=2) = 1 - P(X<2) = 1 - P(X<=1)
+
+```{r cars}
+n = 4
+p = 4/10
+j = 2
+dbinom(j, n, p) #PMF
+sum(dbinom(c(0:2),n,p))
+pbinom(j,n,p) #CDF
+1 - pbinom(1,n,p) #P(X>=2)
+```
+
+```{r}
+nsims = 10e5
+n = 4
+p = 4/10
+j = 2
+simdata = rbinom(nsims, n, p)
+mean(simdata==2)
+mean(simdata<=2)
+mean(simdata>=2)
+```
+```{r}
+library(ggplot2)
+```
+```{r}
+datamat = matrix(nrow = 5, ncol = 2, c(0, dbinom(0, n, p), 1, dbinom(1, n, p), 2, dbinom(2, n, p), 3, dbinom(3, n, p), 4, dbinom(4, n, p)), byrow = TRUE)
+dframe = data.frame(datamat)
+dframe
+p1 = ggplot(data = dframe) + geom_col(aes(x = dframe[,1], y = dframe[,2]), color = 'blue', fill = 'steelblue')
+p1
+```
+```{r}
+dfBinom = as.data.frame(table(simdata))
+colnames(dfBinom) = c('Values', 'Frequency')
+dfBinom['Probability'] = dfBinom['Frequency']/nsims
+p1 = ggplot(data = dfBinom) + geom_col(aes(x = Values, y = Probability), color = 'blue', fill = 'steelblue') + ggtitle("Probability Mass Function (PMF) for X~Bin(n=4, P=0.4)")
+p1
+```
+```{r}
+simdata = rbinom(nsims, n, 0.1)
+dfBinom = as.data.frame(table(simdata))
+colnames(dfBinom) = c('Values', 'Frequency')
+dfBinom['Probability'] = dfBinom['Frequency']/nsims
+p11 = ggplot(data = dfBinom) + geom_col(aes(x = Values, y = Probability), color = 'blue', fill = 'steelblue') + ggtitle("Probability Mass Function (PMF) for X~Bin(n=4, P=0.1)")
+p11
+
+simdata = rbinom(nsims, n, 0.4)
+dfBinom = as.data.frame(table(simdata))
+colnames(dfBinom) = c('Values', 'Frequency')
+dfBinom['Probability'] = dfBinom['Frequency']/nsims
+p12 = ggplot(data = dfBinom) + geom_col(aes(x = Values, y = Probability), color = 'blue', fill = 'steelblue') + ggtitle("Probability Mass Function (PMF) for X~Bin(n=4, P=0.4)")
+p12
+
+simdata = rbinom(nsims, n, 0.5)
+dfBinom = as.data.frame(table(simdata))
+colnames(dfBinom) = c('Values', 'Frequency')
+dfBinom['Probability'] = dfBinom['Frequency']/nsims
+p13 = ggplot(data = dfBinom) + geom_col(aes(x = Values, y = Probability), color = 'blue', fill = 'steelblue') + ggtitle("Probability Mass Function (PMF) for X~Bin(n=4, P=0.5)")
+p13
+
+simdata = rbinom(nsims, n, 0.7)
+dfBinom = as.data.frame(table(simdata))
+colnames(dfBinom) = c('Values', 'Frequency')
+dfBinom['Probability'] = dfBinom['Frequency']/nsims
+p15 = ggplot(data = dfBinom) + geom_col(aes(x = Values, y = Probability), color = 'blue', fill = 'steelblue') + ggtitle("Probability Mass Function (PMF) for X~Bin(n=4, P=0.7)")
+p15
+
+simdata = rbinom(nsims, n, 0.9)
+dfBinom = as.data.frame(table(simdata))
+colnames(dfBinom) = c('Values', 'Frequency')
+dfBinom['Probability'] = dfBinom['Frequency']/nsims
+p14 = ggplot(data = dfBinom) + geom_col(aes(x = Values, y = Probability), color = 'blue', fill = 'steelblue') + ggtitle("Probability Mass Function (PMF) for X~Bin(n=4, P=0.9)")
+p14
+```
+
+```{r}
+mean(simdata) #long run average of simulated values of random variable, also called the expected value
+#simdata - mean(simdata) #mean centered simulated values
+mean((simdata - mean(simdata))^2) #variance
+sqrt(mean((simdata - mean(simdata))^2)) #SD
+```
+
+```{r}
+nsimulations = 1000
+simulatedData = rnorm(nsimulations, mean = 74, sd = 6)
+#print(simulatedData)
+mean(simulatedData) #Expected value
+mean((simulatedData - mean(simulatedData))^2) #Variance
+sdev = sqrt(mean((simulatedData - mean(simulatedData))^2)) #SD
+```
+
+```{r}
+#Component Plot
+heart_rates = data.frame(nsimulations, simulatedData)
+colnames(heart_rates) = c('NumberofPatients', 'Heartrate')
+heart_rates
+p = ggplot(data = heart_rates) + geom_point(aes(x = c(1:1000), y = Heartrate), color = 'blue') +labs(x = 'Patients', y = 'Heart Rate(in BPM)') + ggtitle("Scatter plot for Heart Rate v/s Patient") + geom_line(aes(x = c(1:1000), y = mean(simulatedData)), color = 'red') + geom_line(aes(x = c(1:1000), y = mean(simulatedData)+sdev), color = 'green') + geom_line(aes(x = c(1:1000), y = mean(simulatedData)-sdev), color = 'green')
+p
+```
+
+```{r}
+((mean(simulatedData)+sdev)+(mean(simulatedData)-sdev))/2
+```
+
+```{r}
+mean(abs(simulatedData - mean(simulatedData)) <= sd(simulatedData))
+```
+
+```{r}
+n=4
+p=0.4
+j = c(0:n)
+p = dbinom(j, n, p)
+p
+j * p #Hadamard Product
+sum(j*p) 
+j %*% p #Dot Product
+```
+
+```{r}
+1 - ((0.99)^20) - choose(20,1)*(0.01)*((0.99)^19)
+```
+
+```{r}
+x = c('A', 'A', 'B', 'B', 'A', 'C', 'A', 'C')
+grepl('B', x)
+unique(x)
+length(x)
+ceiling(1.3)
+```
+
